@@ -1,0 +1,80 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'Cascadia Code', monospace;
+
+  --color-brand-50: #fef2f3;
+  --color-brand-100: #fde3e5;
+  --color-brand-200: #fbcbd0;
+  --color-brand-500: #e0243a;
+  --color-brand-600: #c8102e;
+  --color-brand-700: #a50d26;
+  --color-brand-800: #870f24;
+
+  --color-ink-900: #0f172a;
+  --color-ink-800: #1e293b;
+}
+
+@layer base {
+  html, body, #root { min-height: 100%; }
+  body {
+    @apply bg-slate-50 text-slate-800 antialiased;
+    font-feature-settings: 'cv11', 'ss01';
+  }
+  ::selection { @apply bg-brand-100 text-brand-800; }
+}
+
+@utility btn {
+  @apply inline-flex items-center justify-center gap-2 rounded-lg px-3.5 h-9 text-sm font-medium whitespace-nowrap
+    transition-colors duration-150 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed
+    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/40 focus-visible:ring-offset-1;
+}
+
+@layer components {
+  .card { @apply bg-white border border-slate-200 rounded-xl shadow-[0_1px_2px_rgba(15,23,42,0.04)]; }
+  .card-header { @apply flex items-center justify-between gap-3 px-5 py-4 border-b border-slate-100; }
+  .card-title { @apply text-sm font-semibold text-slate-900; }
+  .card-subtitle { @apply text-xs text-slate-500; }
+
+  .btn-primary { @apply btn bg-brand-600 text-white hover:bg-brand-700 shadow-sm; }
+  .btn-dark { @apply btn bg-slate-900 text-white hover:bg-slate-800 shadow-sm; }
+  .btn-success { @apply btn bg-emerald-600 text-white hover:bg-emerald-700 shadow-sm; }
+  .btn-secondary { @apply btn bg-white text-slate-700 border border-slate-300 hover:bg-slate-50 hover:border-slate-400; }
+  .btn-ghost { @apply btn text-slate-600 hover:bg-slate-100 hover:text-slate-900; }
+  .btn-danger { @apply btn bg-white text-red-700 border border-red-200 hover:bg-red-50; }
+  .btn-sm { @apply h-8 px-3 text-xs; }
+  .btn-icon { @apply inline-flex items-center justify-center w-8 h-8 rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition-colors cursor-pointer; }
+
+  .label { @apply block text-xs font-medium text-slate-600 mb-1.5; }
+  .input {
+    @apply w-full h-9 rounded-lg border border-slate-300 bg-white px-3 text-sm text-slate-900 placeholder:text-slate-400
+      transition-shadow outline-none focus:border-brand-500 focus:ring-3 focus:ring-brand-500/15
+      disabled:bg-slate-50 disabled:text-slate-500 read-only:bg-slate-50;
+  }
+  textarea.input { @apply h-auto py-2; }
+  .input-error { @apply border-red-400 focus:border-red-500 focus:ring-red-500/15; }
+  .help { @apply mt-1 text-[11px] text-slate-500; }
+  .error { @apply mt-1 text-[11px] font-medium text-red-600; }
+
+  .section-title { @apply text-[11px] font-semibold uppercase tracking-wider text-slate-500; }
+  .kv-label { @apply text-[11px] font-medium text-slate-500; }
+  .kv-value { @apply text-sm font-medium text-slate-900; }
+
+  .table { @apply w-full text-sm; }
+  .table th { @apply text-left text-[11px] font-semibold uppercase tracking-wider text-slate-500 bg-slate-50 px-4 py-2.5 border-b border-slate-200; }
+  .table td { @apply px-4 py-3 border-b border-slate-100 align-middle; }
+  .table tbody tr { @apply transition-colors; }
+}
+
+@keyframes fade-in { from { opacity: 0 } to { opacity: 1 } }
+@keyframes slide-in-right { from { transform: translateX(24px); opacity: 0 } to { transform: none; opacity: 1 } }
+@keyframes pop-in { from { transform: translateY(8px) scale(.98); opacity: 0 } to { transform: none; opacity: 1 } }
+.animate-fade-in { animation: fade-in .15s ease-out; }
+.animate-slide-in-right { animation: slide-in-right .2s ease-out; }
+.animate-pop-in { animation: pop-in .18s ease-out; }
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 8px; border: 2px solid transparent; background-clip: padding-box; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; background-clip: padding-box; border: 2px solid transparent; }
