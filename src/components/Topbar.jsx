@@ -10,7 +10,7 @@ const TITLES = {
   users: { title: 'Gestión de Usuarios', subtitle: 'Control de accesos y roles del sistema' },
 };
 
-export default function Topbar({ view, setView, currentStage, searchQuery, setSearchQuery, notifications, onMarkRead, onOpenRequest, onNewRequest }) {
+export default function Topbar({ currentUser, view, setView, currentStage, searchQuery, setSearchQuery, notifications, onMarkRead, onOpenRequest, onNewRequest }) {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
 
@@ -109,7 +109,17 @@ export default function Topbar({ view, setView, currentStage, searchQuery, setSe
           )}
         </div>
 
-
+        {currentUser && (
+          <div className="hidden items-center gap-2.5 border-l border-slate-200 pl-4 xl:flex">
+            <Avatar name={currentUser.username} size="sm" />
+            <div className="leading-tight">
+              <p className="text-xs font-semibold text-slate-900">{currentUser.username}</p>
+              <p className="text-[11px] text-slate-500">
+                {currentUser.role === 'admin' ? 'Administrador' : `Etapa ${currentUser.role}`}
+              </p>
+            </div>
+          </div>
+        )}
       </div>
     </header>
   );

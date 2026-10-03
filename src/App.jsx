@@ -141,6 +141,7 @@ export default function App() {
 
       <div className="flex min-w-0 flex-1 flex-col">
         <Topbar
+          currentUser={currentUser}
           view={view}
           setView={setView}
           currentStage={currentStage}
