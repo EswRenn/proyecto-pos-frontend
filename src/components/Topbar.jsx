@@ -109,14 +109,7 @@ export default function Topbar({ view, setView, currentStage, searchQuery, setSe
           )}
         </div>
 
-        <div className="hidden items-center gap-2.5 border-l border-slate-200 pl-4 xl:flex">
-          <Avatar name={user.name} size="sm" />
-          <div className="leading-tight">
-            <p className="text-xs font-semibold text-slate-900">{user.name}</p>
-            <p className="text-[11px] text-slate-500">{user.role}</p>
-          </div>
-          <ChevronDown className="h-3.5 w-3.5 text-slate-400" />
-        </div>
+
       </div>
     </header>
   );
