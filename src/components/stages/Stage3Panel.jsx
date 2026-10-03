@@ -95,12 +95,12 @@ export default function Stage3Panel({ request, readOnly, applyChange, toast }) {
         const tid = (p.vhq?.terminals && Object.values(p.vhq.terminals)[0]) || 
                     (p.mipos?.terminals && Object.values(p.mipos.terminals)[0]) || "TID-001";
 
-        const resAfiliados = await fetch('http://localhost:8080/api/afiliados');
+        const resAfiliados = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8080'}/api/afiliados');
         const afiliados = await resAfiliados.json();
         const miAfiliado = afiliados.find(a => a.solicitud && a.solicitud.id === parseInt(backendId, 10));
 
         if (miAfiliado) {
-          await fetch('http://localhost:8080/api/terminales', {
+          await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8080'}/api/terminales', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
