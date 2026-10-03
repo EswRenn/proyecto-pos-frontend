@@ -8,6 +8,8 @@ import TechArchitectureView from './components/TechArchitectureView';
 import RequestFormModal from './components/RequestFormModal';
 import RequestDetailDrawer from './components/RequestDetailDrawer';
 import DocumentViewerModal from './components/DocumentViewerModal';
+import LoginView from './views/LoginView';
+import UsersManagementView from './views/UsersManagementView';
 import { Toasts } from './components/ui';
 import { initialRequests, initialNotifications } from './data/mockRequests';
 import { getStage, nowISO, newRequestId } from './lib/workflow';
@@ -24,8 +26,8 @@ function loadState() {
 
 export default function App() {
   const [{ requests, notifications }, setData] = useState(loadState);
+  const [currentUser, setCurrentUser] = useState(null);
   const [view, setView] = useState('dashboard');
-  const [role, setRole] = useState('admin');
   const [searchQuery, setSearchQuery] = useState('');
   const [toasts, setToasts] = useState([]);
 
@@ -112,9 +114,30 @@ export default function App() {
 
   const detailRequest = requests.find((r) => r.id === detailId) || null;
 
+  const role = currentUser ? (currentUser.role === 'admin' ? 'admin' : Number(currentUser.role)) : null;
+
+  if (!currentUser) {
+    return (
+      <LoginView onLogin={(user) => {
+        setCurrentUser(user);
+        const r = user.role === 'admin' ? 'admin' : Number(user.role);
+        setView(r === 'admin' ? 'dashboard' : `stage-${r}`);
+      }} />
+    );
+  }
+
   return (
     <div className="flex min-h-screen">
-      <Sidebar view={view} setView={setView} role={role} setRole={setRole} requests={requests} notifications={notifications} onReset={resetDemo} />
+      <Sidebar 
+        view={view} 
+        setView={setView} 
+        role={role} 
+        user={currentUser}
+        onLogout={() => setCurrentUser(null)} 
+        requests={requests} 
+        notifications={notifications} 
+        onReset={resetDemo} 
+      />
 
       <div className="flex min-w-0 flex-1 flex-col">
         <Topbar
@@ -130,6 +153,8 @@ export default function App() {
         />
 
         <main className="mx-auto w-full max-w-[1400px] flex-1 px-6 py-6 lg:px-8">
+          {view === 'users' && <UsersManagementView />}
+
           {view === 'dashboard' && (
             <DashboardView
               requests={requests}

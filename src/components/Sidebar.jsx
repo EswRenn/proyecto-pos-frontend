@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayoutDashboard, Network, FileCode2, RotateCcw, CreditCard } from 'lucide-react';
+import { LayoutDashboard, Network, FileCode2, RotateCcw, CreditCard, Users } from 'lucide-react';
 import { STAGES } from '../lib/workflow';
 
 function Item({ id, icon: Icon, label, hint, count, unread, view, setView }) {
@@ -26,28 +26,9 @@ function Item({ id, icon: Icon, label, hint, count, unread, view, setView }) {
   );
 }
 
-export default function Sidebar({ view, setView, role, setRole, requests, notifications, onReset }) {
+export default function Sidebar({ view, setView, role, user, onLogout, requests, notifications, onReset }) {
   const pendingIn = (stage) => requests.filter((r) => r.stage === stage && !r.completed).length;
   const unreadIn = (stage) => notifications.filter((n) => n.stage === stage && !n.read).length;
-
-  const ROLES = [
-    { id: 'admin', label: 'Administrador' },
-    { id: 1, label: '1. Servicio al Cliente' },
-    { id: 2, label: '2. Validador' },
-    { id: 3, label: '3. Programador' },
-    { id: 4, label: '4. Logística' },
-    { id: 5, label: '5. Técnico' },
-  ];
-
-  const handleRoleChange = (e) => {
-    const newRole = e.target.value === 'admin' ? 'admin' : Number(e.target.value);
-    setRole(newRole);
-    if (newRole !== 'admin') {
-      setView(`stage-${newRole}`);
-    } else {
-      setView('dashboard');
-    }
-  };
 
   return (
     <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col bg-ink-900 lg:flex">
@@ -57,13 +38,9 @@ export default function Sidebar({ view, setView, role, setRole, requests, notifi
         </span>
         <div className="flex-1 min-w-0">
           <p className="text-sm font-semibold leading-tight text-white">POS Central</p>
-          <select 
-            value={role} 
-            onChange={handleRoleChange}
-            className="mt-1 block w-full rounded bg-white/10 px-2 py-1 text-[11px] text-slate-300 outline-none hover:bg-white/20 truncate"
-          >
-            {ROLES.map(r => <option key={r.id} value={r.id} className="text-slate-900">{r.label}</option>)}
-          </select>
+          <p className="truncate mt-1 text-[11px] text-slate-300">
+            👤 {user?.username} ({role === 'admin' ? 'Admin' : `Etapa ${role}`})
+          </p>
         </div>
       </div>
 
@@ -98,11 +75,17 @@ export default function Sidebar({ view, setView, role, setRole, requests, notifi
           <div className="space-y-0.5">
             <Item view={view} setView={setView} id="systems" icon={Network} label="Sistemas integrados" hint="VHQ · AS400 · Mipos · CSP" />
             <Item view={view} setView={setView} id="architecture" icon={FileCode2} label="Propuesta técnica" hint="Arquitectura y estándares" />
+            {role === 'admin' && (
+              <Item view={view} setView={setView} id="users" icon={Users} label="Gestión de Usuarios" hint="Control de accesos y roles" />
+            )}
           </div>
         </div>
       </nav>
 
-      <div className="border-t border-white/5 p-3">
+      <div className="border-t border-white/5 p-3 space-y-1">
+        <button onClick={onLogout} className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-xs text-red-400 hover:bg-white/5 hover:text-red-300">
+          <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg> Cerrar Sesión
+        </button>
         <button onClick={onReset} className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-xs text-slate-500 hover:bg-white/5 hover:text-slate-300">
           <RotateCcw className="h-3.5 w-3.5" /> Restablecer datos demo
         </button>
