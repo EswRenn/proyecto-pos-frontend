@@ -86,7 +86,37 @@ export default function Stage3Panel({ request, readOnly, applyChange, toast }) {
 
   const allDone = hw.systems.every((s) => p[s].done);
 
-  const finish = () => {
+  const finish = async () => {
+    try {
+      const backendIdMatch = request.id.match(/^REQ-B(\d+)$/);
+      if (backendIdMatch) {
+        const backendId = backendIdMatch[1];
+        const serial = p.vhq?.serial || p.as400?.serial || p.mipos?.readerId || "SN-12345";
+        const tid = (p.vhq?.terminals && Object.values(p.vhq.terminals)[0]) || 
+                    (p.mipos?.terminals && Object.values(p.mipos.terminals)[0]) || "TID-001";
+
+        const resAfiliados = await fetch('http://localhost:8080/api/afiliados');
+        const afiliados = await resAfiliados.json();
+        const miAfiliado = afiliados.find(a => a.solicitud && a.solicitud.id === parseInt(backendId, 10));
+
+        if (miAfiliado) {
+          await fetch('http://localhost:8080/api/terminales', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              numeroSerie: serial,
+              tid: tid,
+              tipoConexion: "IP", // Asumido
+              sistemaSubyacente: hw.systems.join(','),
+              afiliado: { id: miAfiliado.id }
+            })
+          });
+        }
+      }
+    } catch (e) {
+      console.error("Error sincronizando Etapa 3 con Backend:", e);
+    }
+
     applyChange(request.id, (r) => ({ ...r, stage: 4, programming: p }), {
       action: `Programación completada (${hw.systems.map((s) => SYSTEMS[s].name).join(', ')})`,
       stage: 3,
