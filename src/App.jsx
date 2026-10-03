@@ -25,6 +25,7 @@ function loadState() {
 export default function App() {
   const [{ requests, notifications }, setData] = useState(loadState);
   const [view, setView] = useState('dashboard');
+  const [role, setRole] = useState('admin');
   const [searchQuery, setSearchQuery] = useState('');
   const [toasts, setToasts] = useState([]);
 
@@ -113,7 +114,7 @@ export default function App() {
 
   return (
     <div className="flex min-h-screen">
-      <Sidebar view={view} setView={setView} requests={requests} notifications={notifications} onReset={resetDemo} />
+      <Sidebar view={view} setView={setView} role={role} setRole={setRole} requests={requests} notifications={notifications} onReset={resetDemo} />
 
       <div className="flex min-w-0 flex-1 flex-col">
         <Topbar

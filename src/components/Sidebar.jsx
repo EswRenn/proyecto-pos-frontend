@@ -26,9 +26,28 @@ function Item({ id, icon: Icon, label, hint, count, unread, view, setView }) {
   );
 }
 
-export default function Sidebar({ view, setView, requests, notifications, onReset }) {
+export default function Sidebar({ view, setView, role, setRole, requests, notifications, onReset }) {
   const pendingIn = (stage) => requests.filter((r) => r.stage === stage && !r.completed).length;
   const unreadIn = (stage) => notifications.filter((n) => n.stage === stage && !n.read).length;
+
+  const ROLES = [
+    { id: 'admin', label: 'Administrador' },
+    { id: 1, label: '1. Servicio al Cliente' },
+    { id: 2, label: '2. Validador' },
+    { id: 3, label: '3. Programador' },
+    { id: 4, label: '4. Logística' },
+    { id: 5, label: '5. Técnico' },
+  ];
+
+  const handleRoleChange = (e) => {
+    const newRole = e.target.value === 'admin' ? 'admin' : Number(e.target.value);
+    setRole(newRole);
+    if (newRole !== 'admin') {
+      setView(`stage-${newRole}`);
+    } else {
+      setView('dashboard');
+    }
+  };
 
   return (
     <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col bg-ink-900 lg:flex">
@@ -36,21 +55,29 @@ export default function Sidebar({ view, setView, requests, notifications, onRese
         <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-600 text-white shadow-lg shadow-brand-600/30">
           <CreditCard className="h-5 w-5" />
         </span>
-        <div>
+        <div className="flex-1 min-w-0">
           <p className="text-sm font-semibold leading-tight text-white">POS Central</p>
-          <p className="text-[11px] text-slate-500">Gestión de terminales</p>
+          <select 
+            value={role} 
+            onChange={handleRoleChange}
+            className="mt-1 block w-full rounded bg-white/10 px-2 py-1 text-[11px] text-slate-300 outline-none hover:bg-white/20 truncate"
+          >
+            {ROLES.map(r => <option key={r.id} value={r.id} className="text-slate-900">{r.label}</option>)}
+          </select>
         </div>
       </div>
 
       <nav className="flex-1 space-y-6 overflow-y-auto px-3 py-5">
-        <div className="space-y-0.5">
-          <Item view={view} setView={setView} id="dashboard" icon={LayoutDashboard} label="Panel general" />
-        </div>
+        {role === 'admin' && (
+          <div className="space-y-0.5">
+            <Item view={view} setView={setView} id="dashboard" icon={LayoutDashboard} label="Panel general" />
+          </div>
+        )}
 
         <div>
           <p className="mb-2 px-3 text-[10px] font-semibold uppercase tracking-wider text-slate-500">Flujo de trabajo</p>
           <div className="space-y-0.5">
-            {STAGES.map((s) => (
+            {STAGES.filter(s => role === 'admin' || role === s.id).map((s) => (
               <Item
                 view={view}
                 setView={setView}
