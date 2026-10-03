@@ -22,9 +22,30 @@ export default function Stage5Panel({ request, readOnly, actor, applyChange, toa
   const allChecked = items.every((i) => checks[i.id]);
   const valid = allChecked && receivedBy.trim();
 
-  const confirm = () => {
+  const confirm = async () => {
     setTouched(true);
     if (!valid) return;
+
+    try {
+      const backendIdMatch = request.id.match(/^REQ-B(\d+)$/);
+      if (backendIdMatch) {
+        const backendId = parseInt(backendIdMatch[1], 10);
+        const resOrdenes = await fetch('http://localhost:8080/api/ordenes-despacho');
+        const ordenes = await resOrdenes.json();
+        const miOrden = ordenes.find(o => o.terminal && o.terminal.afiliado && o.terminal.afiliado.solicitud && o.terminal.afiliado.solicitud.id === backendId);
+
+        if (miOrden) {
+          await fetch(`http://localhost:8080/api/ordenes-despacho/${miOrden.id}/estado`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'text/plain' },
+            body: 'Confirmacion de Instalacion'
+          });
+        }
+      }
+    } catch (e) {
+      console.error("Error sincronizando Etapa 5:", e);
+    }
+
     applyChange(
       request.id,
       (r) => ({ ...r, completed: true, installation: { confirmedAt: new Date().toISOString(), receivedBy: receivedBy.trim(), notes, by: actor } }),

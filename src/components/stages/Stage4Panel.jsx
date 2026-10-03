@@ -19,9 +19,34 @@ export default function Stage4Panel({ request, readOnly, applyChange, toast }) {
   const dateError = !d.date ? 'Selecciona una fecha' : !isBusinessDay(d.date) ? 'Solo se permiten días hábiles (lunes a viernes)' : null;
   const valid = !dateError && d.address.trim() && d.technician && d.shipped;
 
-  const submit = () => {
+  const submit = async () => {
     setTouched(true);
     if (!valid) return;
+
+    try {
+      const backendIdMatch = request.id.match(/^REQ-B(\d+)$/);
+      if (backendIdMatch) {
+        const backendId = parseInt(backendIdMatch[1], 10);
+        const resTerminales = await fetch('http://localhost:8080/api/terminales');
+        const terminales = await resTerminales.json();
+        const miTerminal = terminales.find(t => t.afiliado && t.afiliado.solicitud && t.afiliado.solicitud.id === backendId);
+
+        if (miTerminal) {
+          await fetch('http://localhost:8080/api/ordenes-despacho', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              fechaHabil: d.date,
+              jornada: d.shift,
+              terminal: { id: miTerminal.id }
+            })
+          });
+        }
+      }
+    } catch (e) {
+      console.error("Error sincronizando Etapa 4:", e);
+    }
+
     const delivery = { date: d.date, shift: d.shift, technician: d.technician, address: d.address, notes: d.notes };
     applyChange(request.id, (r) => ({ ...r, stage: 5, delivery: { ...delivery, dispatchedAt: new Date().toISOString() } }), {
       action: `Visita programada para ${formatDate(d.date)} (${d.shift}) y POS despachado`,
