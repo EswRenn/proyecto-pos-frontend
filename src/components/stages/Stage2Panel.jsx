@@ -45,9 +45,35 @@ export default function Stage2Panel({ request, readOnly, actor, applyChange, toa
     setAffiliates(next);
   };
 
-  const approve = () => {
+  const approve = async () => {
     setTouched(true);
     if (!docsOk || !affiliatesOk) return;
+
+    try {
+      const backendIdMatch = request.id.match(/^REQ-B(\d+)$/);
+      if (backendIdMatch) {
+        const backendId = backendIdMatch[1];
+        const firstAffiliate = Object.values(affiliates).find(v => v);
+        
+        await fetch('http://localhost:8080/api/afiliados', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            numeroAfiliado: firstAffiliate || '',
+            solicitud: { id: parseInt(backendId, 10) }
+          })
+        });
+
+        await fetch(`http://localhost:8080/api/solicitudes/${backendId}/estado`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'text/plain' },
+          body: 'Aprobada'
+        });
+      }
+    } catch (e) {
+      console.error("Error sincronizando Etapa 2 con Backend:", e);
+    }
+
     applyChange(
       request.id,
       (r) => ({

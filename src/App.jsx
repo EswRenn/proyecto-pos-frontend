@@ -61,8 +61,28 @@ export default function App() {
     });
   }, []);
 
-  const createRequest = (req, sendNow) => {
-    const id = newRequestId(requests);
+  const createRequest = async (req, sendNow) => {
+    let backendId = newRequestId(requests);
+    try {
+      const response = await fetch('http://localhost:8080/api/solicitudes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          giroNegocio: req.business.tradeType,
+          datosFiscales: `NIT: ${req.customer.nit}, Cliente: ${req.customer.firstName} ${req.customer.lastName}`,
+          modalidadPos: req.saleTypes.join(', ')
+        })
+      });
+      if (response.ok) {
+        const data = await response.json();
+        backendId = `REQ-B${data.id}`; // Prefijo B para identificar que viene del backend
+      }
+    } catch (error) {
+      console.error("Error conectando al backend:", error);
+      toast('Error de conexión', 'No se pudo conectar al backend. Guardado localmente.', 'red');
+    }
+
+    const id = backendId;
     const at = nowISO();
     const history = [{ at, stage: 1, action: sendNow ? 'Gestión creada' : 'Gestión creada (borrador)', by: getStage(1).user }];
     if (sendNow) history.push({ at, stage: 1, action: 'Enviada a validación', by: getStage(1).user });
