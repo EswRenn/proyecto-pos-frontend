@@ -20,7 +20,7 @@ export default function UsersManagementView() {
 
   const fetchUsers = async () => {
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8080'}/api/usuarios');
+      const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8080'}/api/usuarios`);
       if (res.ok) {
         const data = await res.json();
         setUsers(data);
@@ -47,7 +47,7 @@ export default function UsersManagementView() {
     }
 
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8080'}/api/usuarios', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8080'}/api/usuarios`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form)

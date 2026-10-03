@@ -13,7 +13,7 @@ export default function LoginView({ onLogin }) {
     setLoading(true);
 
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8080'}/api/usuarios/login', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8080'}/api/usuarios/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password })

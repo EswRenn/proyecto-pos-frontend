@@ -55,7 +55,7 @@ export default function Stage2Panel({ request, readOnly, actor, applyChange, toa
         const backendId = backendIdMatch[1];
         const firstAffiliate = Object.values(affiliates).find(v => v);
         
-        await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8080'}/api/afiliados', {
+        await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8080'}/api/afiliados`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({

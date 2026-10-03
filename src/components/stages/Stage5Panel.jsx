@@ -30,7 +30,7 @@ export default function Stage5Panel({ request, readOnly, actor, applyChange, toa
       const backendIdMatch = request.id.match(/^REQ-B(\d+)$/);
       if (backendIdMatch) {
         const backendId = parseInt(backendIdMatch[1], 10);
-        const resOrdenes = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8080'}/api/ordenes-despacho');
+        const resOrdenes = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8080'}/api/ordenes-despacho`);
         const ordenes = await resOrdenes.json();
         const miOrden = ordenes.find(o => o.terminal && o.terminal.afiliado && o.terminal.afiliado.solicitud && o.terminal.afiliado.solicitud.id === backendId);
 
