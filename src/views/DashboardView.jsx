@@ -101,16 +101,33 @@ export default function DashboardView({ requests, searchQuery, onOpenDetail, onG
               <p className="card-title">Gestiones</p>
               <p className="card-subtitle">{rows.length} resultado(s){searchQuery && ` para “${searchQuery}”`}</p>
             </div>
-            <div className="flex rounded-lg bg-slate-100 p-0.5">
-              {FILTERS.map((f) => (
-                <button
-                  key={f.id}
-                  onClick={() => setFilter(f.id)}
-                  className={`rounded-md px-3 py-1 text-xs font-medium transition ${filter === f.id ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}
-                >
-                  {f.label}
-                </button>
-              ))}
+            <div className="flex items-center gap-3">
+              <div className="flex rounded-lg bg-slate-100 p-0.5">
+                {FILTERS.map((f) => (
+                  <button
+                    key={f.id}
+                    onClick={() => setFilter(f.id)}
+                    className={`rounded-md px-3 py-1 text-xs font-medium transition ${filter === f.id ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}
+                  >
+                    {f.label}
+                  </button>
+                ))}
+              </div>
+              <button 
+                onClick={() => {
+                  const header = ['ID,Comercio,NIT,Etapa Actual,Progreso,Fecha de Creacion'];
+                  const csv = rows.map(r => `${r.id},"${r.business.name}","${r.customer.nit}",${r.stage},${r.completed ? 'Completado' : 'En Curso'},${formatDateTime(r.createdAt)}`);
+                  const blob = new Blob([[...header, ...csv].join('\\n')], { type: 'text/csv' });
+                  const url = window.URL.createObjectURL(blob);
+                  const a = document.createElement('a');
+                  a.href = url;
+                  a.download = `reporte_gestiones_${new Date().toISOString().split('T')[0]}.csv`;
+                  a.click();
+                }}
+                className="btn-secondary btn-sm"
+              >
+                Exportar CSV
+              </button>
             </div>
           </div>
           {rows.length === 0 ? (
