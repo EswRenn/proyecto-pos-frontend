@@ -111,11 +111,10 @@ export default function Topbar({ currentUser, view, setView, currentStage, searc
 
         {currentUser && (
           <div className="hidden items-center gap-2.5 border-l border-slate-200 pl-4 xl:flex">
-            <Avatar name={currentUser.username} size="sm" />
+            <Avatar name={currentUser.role === 'admin' ? 'Admin' : `Etapa ${currentUser.role}`} size="sm" />
             <div className="leading-tight">
-              <p className="text-xs font-semibold text-slate-900">{currentUser.username}</p>
-              <p className="text-[11px] text-slate-500">
-                {currentUser.role === 'admin' ? 'Administrador' : `Etapa ${currentUser.role}`}
+              <p className="text-xs font-semibold text-slate-900">
+                {currentUser.role === 'admin' ? 'Administrador' : getStage(Number(currentUser.role)).name}
               </p>
             </div>
           </div>
