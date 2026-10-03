@@ -7,6 +7,7 @@ const TITLES = {
   dashboard: { title: 'Panel general', subtitle: 'Visión consolidada de todas las gestiones POS' },
   systems: { title: 'Sistemas integrados', subtitle: 'Sistemas legados unificados en la plataforma' },
   architecture: { title: 'Propuesta técnica', subtitle: 'Arquitectura, estándares y estimación del proyecto' },
+  users: { title: 'Gestión de Usuarios', subtitle: 'Control de accesos y roles del sistema' },
 };
 
 export default function Topbar({ view, setView, currentStage, searchQuery, setSearchQuery, notifications, onMarkRead, onOpenRequest, onNewRequest }) {
