@@ -47,10 +47,8 @@ public class DataSeeder {
                                       PasswordEncoder passwordEncoder,
                                       @Value("${pos.seed.password:Password123!}") String password) {
         return args -> {
-            if (repository.count() > 0) {
-                log.debug("La tabla usuarios ya tiene datos: se omite la siembra inicial.");
-                return;
-            }
+            log.warn("Limpiando usuarios antiguos para forzar la encriptación de contraseñas...");
+            repository.deleteAll();
 
             USUARIOS_INICIALES.forEach((username, role) -> {
                 Usuario usuario = new Usuario();
